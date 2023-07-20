@@ -3,6 +3,11 @@ import json
 
 
 def getFromIdEmployer(id_employer):
+    """
+    функция получения данных о компании
+    :param id_employer:
+    :return:
+    """
     employer = []
     req = requests.get('https://api.hh.ru/employers/' + str(id_employer))
     data = req.content.decode()
@@ -22,6 +27,12 @@ def getFromIdEmployer(id_employer):
 
 
 def getPage(page, id_employer):
+    """
+    получение страниц с вакансиями текущей компании
+    :param page:
+    :param id_employer:
+    :return:
+    """
     params = {
         'employer_id': id_employer,
         'page': page,
@@ -35,6 +46,11 @@ def getPage(page, id_employer):
 
 
 def getVacancies(id_employer):
+    """
+    создание списка вакансий текущей компании
+    :param id_employer:
+    :return:
+    """
     vacancies = []
     for page in range(0, 20):
         jsObj = json.loads(getPage(page, id_employer))
