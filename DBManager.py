@@ -1,4 +1,5 @@
 import psycopg2
+import configparser
 
 
 class DBManager:
@@ -6,7 +7,14 @@ class DBManager:
         self.data = data
 
     def get_companies_and_vacancies_count(self):
-        conn = psycopg2.connect(host='localhost', database='hh_vacancies', user='postgres', password='Mentos19')
+        """
+        Получает список всех компаний и количество вакансий у каждой компании
+        :return:
+        """
+        config = configparser.ConfigParser()
+        config.read("settings.ini")
+        conn = psycopg2.connect(host=config['DBConfig']['host'], database=config['DBConfig']['database'],
+                                user=config['DBConfig']['username'], password=config['DBConfig']['password'])
         result = []
         try:
             with conn:
@@ -22,7 +30,14 @@ class DBManager:
         return result
 
     def get_all_vacancies(self):
-        conn = psycopg2.connect(host='localhost', database='hh_vacancies', user='postgres', password='Mentos19')
+        """
+        Получает список всех вакансий с указанием названия компании, названия вакансии и зарплаты и ссылки на вакансию
+        :return:
+        """
+        config = configparser.ConfigParser()
+        config.read("settings.ini")
+        conn = psycopg2.connect(host=config['DBConfig']['host'], database=config['DBConfig']['database'],
+                                user=config['DBConfig']['username'], password=config['DBConfig']['password'])
         result = []
         try:
             with conn:
@@ -39,13 +54,20 @@ class DBManager:
         return result
 
     def get_avg_salary(self):
-        conn = psycopg2.connect(host='localhost', database='hh_vacancies', user='postgres', password='Mentos19')
+        """
+        Получает среднюю зарплату по вакансиям
+        :return:
+        """
+        config = configparser.ConfigParser()
+        config.read("settings.ini")
+        conn = psycopg2.connect(host=config['DBConfig']['host'], database=config['DBConfig']['database'],
+                                user=config['DBConfig']['username'], password=config['DBConfig']['password'])
         result = []
         try:
             with conn:
                 with conn.cursor() as cur:
 
-                    #средняя зп подсчитывает только полные данные зп от и зп до, что логично
+                    #средняя зп подсчитывает только полные данные 'зп от' и 'зп до', что логично
                     cur.execute(
                         "SELECT AVG(salary_from + salary_to) / 2 AS salary_avg FROM vacancies "
                         "WHERE salary_from NOT IN (0) AND salary_to NOT IN (0) AND salary_currency IN ('RUR')"
@@ -58,7 +80,14 @@ class DBManager:
         return result
 
     def get_vacancies_with_higher_salary(self):
-        conn = psycopg2.connect(host='localhost', database='hh_vacancies', user='postgres', password='Mentos19')
+        """
+        Получает список всех вакансий, у которых зарплата выше средней по всем вакансиям
+        :return:
+        """
+        config = configparser.ConfigParser()
+        config.read("settings.ini")
+        conn = psycopg2.connect(host=config['DBConfig']['host'], database=config['DBConfig']['database'],
+                                user=config['DBConfig']['username'], password=config['DBConfig']['password'])
 
         # вместо подзапроса запускаю функцию средней зп
         avg_salary = self.get_avg_salary()
@@ -77,7 +106,15 @@ class DBManager:
         return result
 
     def get_vacancies_with_keyword(self, key_word):
-        conn = psycopg2.connect(host='localhost', database='hh_vacancies', user='postgres', password='Mentos19')
+        """
+        Получает список всех вакансий, в названии которых содержатся переданное слово
+        :param key_word:
+        :return:
+        """
+        config = configparser.ConfigParser()
+        config.read("settings.ini")
+        conn = psycopg2.connect(host=config['DBConfig']['host'], database=config['DBConfig']['database'],
+                                user=config['DBConfig']['username'], password=config['DBConfig']['password'])
         result = []
         try:
             with conn:
@@ -99,7 +136,10 @@ class DBManager:
         метод заполнения таблицы employers
         :return:
         """
-        conn = psycopg2.connect(host='localhost', database='hh_vacancies', user='postgres', password='Mentos19')
+        config = configparser.ConfigParser()
+        config.read("settings.ini")
+        conn = psycopg2.connect(host=config['DBConfig']['host'], database=config['DBConfig']['database'],
+                                user=config['DBConfig']['username'], password=config['DBConfig']['password'])
         try:
             with conn:
                 with conn.cursor() as cur:
@@ -116,7 +156,10 @@ class DBManager:
         метод заполнения таблицы vacancies
         :return:
         """
-        conn = psycopg2.connect(host='localhost', database='hh_vacancies', user='postgres', password='Mentos19')
+        config = configparser.ConfigParser()
+        config.read("settings.ini")
+        conn = psycopg2.connect(host=config['DBConfig']['host'], database=config['DBConfig']['database'],
+                                user=config['DBConfig']['username'], password=config['DBConfig']['password'])
         try:
             with conn:
                 with conn.cursor() as cur:
